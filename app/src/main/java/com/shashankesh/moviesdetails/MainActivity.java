@@ -10,10 +10,15 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -30,40 +35,43 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.rv_movies);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         new WorkerThread().execute();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
     }
 
     @Override
     public void onClick(MovieDataCollection movieDataCollection) {
-        Intent intent = new Intent(MainActivity.this,DeatiledView.class);
-        intent.putExtra("parsable_data",movieDataCollection);
+        Intent intent = new Intent(MainActivity.this, DeatiledView.class);
+        intent.putExtra("parsable_data", movieDataCollection);
         startActivity(intent);
     }
 
-    private class WorkerThread extends AsyncTask<Void,Void,ArrayList<MovieDataCollection>>{
+    private class WorkerThread extends AsyncTask<Void, Void, ArrayList<MovieDataCollection>> {
         @Override
         protected void onPostExecute(ArrayList<MovieDataCollection> movieDataCollection) {
             super.onPostExecute(movieDataCollection);
             ArrayList<String> imagePath = new ArrayList<>();
-            for(int i=0;i<movieDataCollection.size();i++){
+            for (int i = 0; i < movieDataCollection.size(); i++) {
                 imagePath.add(movieDataCollection.get(i).getPoster_path());
             }
-             moviesAdapter = new MoviesAdapter(movieDataCollection,MainActivity.this);
+            moviesAdapter = new MoviesAdapter(movieDataCollection, MainActivity.this);
             recyclerView.setAdapter(moviesAdapter);
         }
 
         @Override
         protected ArrayList<MovieDataCollection> doInBackground(Void... voids) {
-            Log.i(MainActivity.this.toString(),"TEST: just in async doInBackGround");
+            Log.i(MainActivity.this.toString(), "TEST: just in async doInBackGround");
             ArrayList<MovieDataCollection> movieDataCollection = new NetworkUtils().fetchDataTopRated();
-            Log.i(MainActivity.this.toString(),"TEST: in async doInBackGround with"+movieDataCollection.get(0).getPoster_path());
+            Log.i(MainActivity.this.toString(), "TEST: in async doInBackGround with" + movieDataCollection.get(0).getPoster_path());
             return movieDataCollection;
         }
     }
+
     /**
      * RecyclerView item decoration - give equal margin around grid item
      */
@@ -108,5 +116,23 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.popular) {
+            Toast.makeText(this,"Sorting by popularity",Toast.LENGTH_LONG).show();
+        }else if(id==R.id.ratings){
+            Toast.makeText(this,"Sorting by ratings",Toast.LENGTH_LONG).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

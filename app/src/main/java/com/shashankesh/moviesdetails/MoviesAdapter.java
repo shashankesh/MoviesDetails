@@ -55,7 +55,7 @@ import java.util.ArrayList;
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
         Picasso.get().load("http://image.tmdb.org/t/p/w185/" + movieDataCollection.get(position).getPoster_path()).into(holder.imageView);
         holder.title.setText(movieDataCollection.get(position).getTitle());
-        holder.count.setText("votes: " + Double.toString(movieDataCollection.get(position).getVote_count()));
+        holder.count.setText("Rating: " + Double.toString(movieDataCollection.get(position).getVote_count()));
     }
 
     @Override
