@@ -50,7 +50,7 @@ import java.util.HashMap;
                 holder.heading.setText("Ratings");
                 break;
             case 2:
-                holder.heading.setText("Releasing On");
+                holder.heading.setText("Release Date");
                 break;
 
         }

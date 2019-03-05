@@ -1,10 +1,16 @@
 package com.shashankesh.moviesdetails;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.support.annotation.WorkerThread;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,6 +24,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -29,6 +38,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     MoviesAdapter moviesAdapter;
     RecyclerView recyclerView;
+    ImageView backdropMain;
+    ProgressBar progressBar;
+    LinearLayout emptyView;
+    TextView emptyViewText;
+    boolean sortedByPopularity = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +52,47 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        new WorkerThread().execute();
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.main_activity);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.popular) {
+                    Toast.makeText(getBaseContext(), "Sorting by popularity", Toast.LENGTH_LONG).show();
+                    if (!sortedByPopularity) {
+                        sortedByPopularity = true;
+                        execute(sortedByPopularity);
+                    }
+                } else if (id == R.id.ratings) {
+                    Toast.makeText(getBaseContext(), "Sorting by ratings", Toast.LENGTH_LONG).show();
+                    if (sortedByPopularity) {
+                        sortedByPopularity = false;
+                        execute(sortedByPopularity);
+                    }
+                }
+                return true;
+            }
+        });
+        initCollapsingToolbar();
+        backdropMain = findViewById(R.id.backdrop_main);
+        try {
+            Picasso.get().load(R.drawable.movies_ratings).into(backdropMain);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //setting progress bar
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
+        //initialising empty view
+        emptyView = findViewById(R.id.empty_view);
+        emptyViewText = findViewById(R.id.empty_view_text);
+        if (!sortedByPopularity) {
+            sortedByPopularity = false;
+            execute(sortedByPopularity);
+        }
     }
 
     @Override
@@ -51,23 +102,40 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         startActivity(intent);
     }
 
-    private class WorkerThread extends AsyncTask<Void, Void, ArrayList<MovieDataCollection>> {
+    private class WorkerThread extends AsyncTask<Boolean, Void, ArrayList<MovieDataCollection>> {
         @Override
         protected void onPostExecute(ArrayList<MovieDataCollection> movieDataCollection) {
             super.onPostExecute(movieDataCollection);
-            ArrayList<String> imagePath = new ArrayList<>();
-            for (int i = 0; i < movieDataCollection.size(); i++) {
-                imagePath.add(movieDataCollection.get(i).getPoster_path());
+
+
+            //checking for setting empty view
+            if (movieDataCollection == null) {
+                recyclerView.setVisibility(View.INVISIBLE);
+                emptyView.setVisibility(View.VISIBLE);
+            } else {
+                ArrayList<String> imagePath = new ArrayList<>();
+                for (int i = 0; i < movieDataCollection.size(); i++) {
+                    imagePath.add(movieDataCollection.get(i).getPoster_path());
+                }
+                moviesAdapter = new MoviesAdapter(movieDataCollection, MainActivity.this);
+                recyclerView.setAdapter(moviesAdapter);
+                recyclerView.setHasFixedSize(true);
             }
-            moviesAdapter = new MoviesAdapter(movieDataCollection, MainActivity.this);
-            recyclerView.setAdapter(moviesAdapter);
+            progressBar.setVisibility(View.INVISIBLE);
+
         }
 
         @Override
-        protected ArrayList<MovieDataCollection> doInBackground(Void... voids) {
+        protected ArrayList<MovieDataCollection> doInBackground(Boolean... booleans) {
             Log.i(MainActivity.this.toString(), "TEST: just in async doInBackGround");
-            ArrayList<MovieDataCollection> movieDataCollection = new NetworkUtils().fetchDataTopRated();
-            Log.i(MainActivity.this.toString(), "TEST: in async doInBackGround with" + movieDataCollection.get(0).getPoster_path());
+            ArrayList<MovieDataCollection> movieDataCollection;
+            if (!booleans[0]) {
+                movieDataCollection = new NetworkUtils().fetchDataTopRated();
+            } else {
+                movieDataCollection = new NetworkUtils().fetchDataPopular();
+            }
+
+//            Log.i(MainActivity.this.toString(), "TEST: in async doInBackGround with" + movieDataCollection.get(0).getPoster_path());
             return movieDataCollection;
         }
     }
@@ -129,10 +197,60 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.popular) {
-            Toast.makeText(this,"Sorting by popularity",Toast.LENGTH_LONG).show();
-        }else if(id==R.id.ratings){
-            Toast.makeText(this,"Sorting by ratings",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Sorting by popularity", Toast.LENGTH_LONG).show();
+        } else if (id == R.id.ratings) {
+            Toast.makeText(this, "Sorting by ratings", Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Initializing collapsing toolbar
+     * Will show and hide the toolbar title on scroll
+     */
+    private void initCollapsingToolbar() {
+        final CollapsingToolbarLayout collapsingToolbar =
+                findViewById(R.id.collapsing_toolbar_main);
+        collapsingToolbar.setTitle(" ");
+        AppBarLayout appBarLayout = findViewById(R.id.appbar_main);
+        appBarLayout.setExpanded(true);
+
+        // hiding & showing the title when toolbar expanded & collapsed
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbar.setTitle(getString(R.string.app_name));
+                    isShow = true;
+                } else if (isShow) {
+                    collapsingToolbar.setTitle(" ");
+                    isShow = false;
+                }
+            }
+        });
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    void execute(Boolean bool) {
+        if (isNetworkAvailable()) {
+            progressBar.setVisibility(View.VISIBLE);
+            new WorkerThread().execute(bool);
+        } else {
+            emptyViewText.setText("Please Check Network Connectivity");
+            recyclerView.setVisibility(View.INVISIBLE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
     }
 }

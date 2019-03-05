@@ -92,6 +92,7 @@ public class DeatiledView extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         viewAdapter = new DetailedViewAdapter(hashMap);
         recyclerView.setAdapter(viewAdapter);
+        recyclerView.setHasFixedSize(true);
     }
 }
 

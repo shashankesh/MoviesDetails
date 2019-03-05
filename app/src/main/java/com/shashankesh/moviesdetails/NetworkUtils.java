@@ -34,32 +34,59 @@ import java.util.Scanner;
         Uri uri = Uri.parse(BASE_URL_TOP_RATED).buildUpon()
                 .appendQueryParameter(API_KEY, KEY)
                 .appendQueryParameter(LANGUAGE, LAN_VALUE)
-                .appendQueryParameter(PAGE, PAGE_NO)
+                //.appendQueryParameter(PAGE, PAGE_NO)
                 .build();
-        Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with uri = "+uri);
+        Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with uri = " + uri);
         URL url = buildUrl(uri);
-        Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with url = "+url);
-
-        try {
-            jsonString = getResponseFromHttp(url);
-            //Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with jsonString = "+jsonString);
-        } catch (IOException e) {
-            e.printStackTrace();
+        Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with url = " + url);
+        if (url != null) {
+            try {
+                jsonString = getResponseFromHttp(url);
+                //Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with jsonString = "+jsonString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (jsonString != null) {
+                JsonUtils jsonUtils = new JsonUtils(jsonString);
+                movieDataCollection = jsonUtils.parseJsonString();
+                Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with movieDataCollection = " + movieDataCollection.get(0).getTitle());
+            }
         }
-        if (jsonString != null) {
-            JsonUtils jsonUtils = new JsonUtils(jsonString);
-            movieDataCollection = jsonUtils.parseJsonString();
-        }
-        Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with movieDataCollection = "+movieDataCollection.get(0).getTitle());
         return movieDataCollection;
     }
+
+    public ArrayList<MovieDataCollection> fetchDataPopular() {
+        Uri uri = Uri.parse(BASE_URL_POPULAR).buildUpon()
+                .appendQueryParameter(API_KEY, KEY)
+                .appendQueryParameter(LANGUAGE, LAN_VALUE)
+                //.appendQueryParameter(PAGE, PAGE_NO)
+                .build();
+        Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with uri = " + uri);
+        URL url = buildUrl(uri);
+        Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with url = " + url);
+        if (url != null) {
+            try {
+                jsonString = getResponseFromHttp(url);
+                //Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with jsonString = "+jsonString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (jsonString != null) {
+                JsonUtils jsonUtils = new JsonUtils(jsonString);
+                movieDataCollection = jsonUtils.parseJsonString();
+                Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with movieDataCollection = " + movieDataCollection.get(0).getTitle());
+            }
+        }
+        return movieDataCollection;
+    }
+
 
     private String getResponseFromHttp(URL url) throws IOException {
         if (url != null) {
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             try {
-                Log.i(NetworkUtils.this.toString(),"TEST: in getResponseFromHttp with ResponseCode = "+urlConnection.getResponseCode());
+                Log.i(NetworkUtils.this.toString(), "TEST: in getResponseFromHttp with ResponseCode = " + urlConnection.getResponseCode());
                 InputStream in = urlConnection.getInputStream();
                 Scanner scanner = new Scanner(in);
                 scanner.useDelimiter("\\A");
