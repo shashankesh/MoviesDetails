@@ -47,9 +47,10 @@ import java.util.ArrayList;
                 int id = resultRoot.getInt("id");
                 String title = resultRoot.getString("title");
                 Log.i(JsonUtils.this.toString(), "TEST: in parseJsonString with title = " + title);
+                String backdrop_path = resultRoot.getString("backdrop_path");
                 double popularity = resultRoot.getDouble("popularity");
                 double vote_count = resultRoot.getDouble("vote_average");
-                movieDataCollections.add(new MovieDataCollection(poster_path, adult, overview, release_date, genre_id, id, title, popularity, vote_count));
+                movieDataCollections.add(new MovieDataCollection(poster_path, adult, overview, release_date, genre_id, id, title, popularity, vote_count,backdrop_path));
             }
         } catch (JSONException e) {
             e.printStackTrace();

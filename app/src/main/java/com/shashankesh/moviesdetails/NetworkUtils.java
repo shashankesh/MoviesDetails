@@ -19,6 +19,11 @@ import java.util.Scanner;
  */public class NetworkUtils {
     final private static String BASE_URL_POPULAR = "https://api.themoviedb.org/3/movie/popular";
     final private static String BASE_URL_TOP_RATED = "https://api.themoviedb.org/3/movie/top_rated";
+    final private static String BASE_URL="https://api.themoviedb.org/3/movie";
+
+    final private static String POPULAR = "popular";
+    final private static String TOP_RATED = "top_rated";
+    String movieId;
 
     final private static String API_KEY = "api_key";
     final private static String KEY = "bd7fa1082e5ff4ff65dc508565b45b7c";//language=en-US & page=1
@@ -30,8 +35,16 @@ import java.util.Scanner;
     String jsonString;
     ArrayList<MovieDataCollection> movieDataCollection;
 
+    public NetworkUtils() {
+    }
+
+    public NetworkUtils(String movieId) {
+        this.movieId = movieId;
+    }
+
     public ArrayList<MovieDataCollection> fetchDataTopRated() {
-        Uri uri = Uri.parse(BASE_URL_TOP_RATED).buildUpon()
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(TOP_RATED)
                 .appendQueryParameter(API_KEY, KEY)
                 .appendQueryParameter(LANGUAGE, LAN_VALUE)
                 //.appendQueryParameter(PAGE, PAGE_NO)
@@ -56,7 +69,8 @@ import java.util.Scanner;
     }
 
     public ArrayList<MovieDataCollection> fetchDataPopular() {
-        Uri uri = Uri.parse(BASE_URL_POPULAR).buildUpon()
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(POPULAR)
                 .appendQueryParameter(API_KEY, KEY)
                 .appendQueryParameter(LANGUAGE, LAN_VALUE)
                 //.appendQueryParameter(PAGE, PAGE_NO)
@@ -80,6 +94,32 @@ import java.util.Scanner;
         return movieDataCollection;
     }
 
+    public MovieDataCollection fetchDataMovieId(String movieId) {
+        MovieDataCollection movieDataCollection = null;
+
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(movieId)
+                .appendQueryParameter(API_KEY, KEY)
+                .appendQueryParameter(LANGUAGE, LAN_VALUE)
+                //.appendQueryParameter(PAGE, PAGE_NO)
+                .build();
+        Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with uri = " + uri);
+        URL url = buildUrl(uri);
+        Log.i(NetworkUtils.this.toString(), "TEST: in fetchDataTopRated with url = " + url);
+        if (url != null) {
+            try {
+                jsonString = getResponseFromHttp(url);
+                //Log.i(NetworkUtils.this.toString(),"TEST: in fetchDataTopRated with jsonString = "+jsonString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (jsonString != null) {
+                JsonUtilsDetailed jsonUtils = new JsonUtilsDetailed(jsonString);
+                movieDataCollection = jsonUtils.parseJsonString();
+            }
+        }
+        return movieDataCollection;
+    }
 
     private String getResponseFromHttp(URL url) throws IOException {
         if (url != null) {

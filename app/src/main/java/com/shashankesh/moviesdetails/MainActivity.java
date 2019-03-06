@@ -60,17 +60,21 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.popular) {
-                    Toast.makeText(getBaseContext(), "Sorting by popularity", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Sorting by popularity", Toast.LENGTH_SHORT).show();
                     if (!sortedByPopularity) {
                         sortedByPopularity = true;
                         execute(sortedByPopularity);
-                    }
+                        Toast.makeText(getBaseContext(), "Sorted by popularity", Toast.LENGTH_SHORT).show();
+                    }else Toast.makeText(getBaseContext(), "Already sorted by popularity", Toast.LENGTH_SHORT).show();
+
                 } else if (id == R.id.ratings) {
-                    Toast.makeText(getBaseContext(), "Sorting by ratings", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Sorting by ratings", Toast.LENGTH_SHORT).show();
                     if (sortedByPopularity) {
                         sortedByPopularity = false;
                         execute(sortedByPopularity);
-                    }
+                        Toast.makeText(getBaseContext(), "Sorted by ratings", Toast.LENGTH_SHORT).show();
+
+                    }else Toast.makeText(getBaseContext(), "Already sorted by ratings", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
