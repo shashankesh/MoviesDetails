@@ -1,4 +1,4 @@
-package com.shashankesh.moviesdetails;
+package com.shashankesh.moviesdetails.Detailed;
 
 /*
  *File DetailDataCollection

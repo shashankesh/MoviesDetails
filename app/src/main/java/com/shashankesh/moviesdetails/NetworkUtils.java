@@ -3,12 +3,15 @@ package com.shashankesh.moviesdetails;
 import android.net.Uri;
 import android.util.Log;
 
+import com.shashankesh.moviesdetails.Detailed.JsonUtilsDetailed;
+import com.shashankesh.moviesdetails.Main.JsonUtils;
+import com.shashankesh.moviesdetails.Main.MainActivity;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -43,6 +46,7 @@ import java.util.Scanner;
     }
 
     public ArrayList<MovieDataCollection> fetchDataTopRated() {
+        Log.i(NetworkUtils.class.getName(),"TEST2: inside fetchDataTopRated");
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(TOP_RATED)
                 .appendQueryParameter(API_KEY, KEY)
@@ -69,6 +73,7 @@ import java.util.Scanner;
     }
 
     public ArrayList<MovieDataCollection> fetchDataPopular() {
+        Log.i(NetworkUtils.class.getName(),"TEST2: inside fetchDataPopular");
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(POPULAR)
                 .appendQueryParameter(API_KEY, KEY)
@@ -96,7 +101,7 @@ import java.util.Scanner;
 
     public MovieDataCollection fetchDataMovieId(String movieId) {
         MovieDataCollection movieDataCollection = null;
-
+        Log.i(NetworkUtils.class.getName(),"TEST2: inside fetchDataMovieId");
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendPath(movieId)
                 .appendQueryParameter(API_KEY, KEY)
@@ -149,5 +154,10 @@ import java.util.Scanner;
             e.printStackTrace();
         }
         return url;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

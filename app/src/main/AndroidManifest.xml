@@ -12,12 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DeatiledView"
-            android:parentActivityName="com.shashankesh.moviesdetails.MainActivity">
+        <activity android:name=".Detailed.DeatiledView"
+            android:parentActivityName="com.shashankesh.moviesdetails.Main.MainActivity">
             <meta-data  android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.shashankesh.moviesdetails.MainActivity"></meta-data>
+                android:value="com.shashankesh.moviesdetails.Main.MainActivity"></meta-data>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".Main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

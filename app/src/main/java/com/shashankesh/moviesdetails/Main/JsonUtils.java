@@ -1,6 +1,8 @@
-package com.shashankesh.moviesdetails;
+package com.shashankesh.moviesdetails.Main;
 
 import android.util.Log;
+
+import com.shashankesh.moviesdetails.MovieDataCollection;
 
 import org.json.JSONArray;
 import org.json.JSONException;

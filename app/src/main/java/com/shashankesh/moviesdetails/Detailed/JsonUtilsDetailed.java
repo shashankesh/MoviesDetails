@@ -1,4 +1,6 @@
-package com.shashankesh.moviesdetails;
+package com.shashankesh.moviesdetails.Detailed;
+
+import com.shashankesh.moviesdetails.MovieDataCollection;
 
 import org.json.JSONArray;
 import org.json.JSONException;

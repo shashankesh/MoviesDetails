@@ -1,4 +1,4 @@
-package com.shashankesh.moviesdetails;
+package com.shashankesh.moviesdetails.Main;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.shashankesh.moviesdetails.MovieDataCollection;
+import com.shashankesh.moviesdetails.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,6 +37,12 @@ import java.util.ArrayList;
 
     public MoviesAdapter(ArrayList<MovieDataCollection> movieDataCollection) {
         this.movieDataCollection = movieDataCollection;
+    }
+
+    public void clear() {
+        final int size = movieDataCollection.size();
+        movieDataCollection.clear();
+        notifyItemRangeRemoved(0,size);
     }
 
     public interface MoviesAdapterOnClickHandler {
