@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         startActivity(intent);
     }
 
+
     @Override
     public Loader<ArrayList<MovieDataCollection>> onCreateLoader(int i, Bundle bundle) {
         Log.i(MainActivity.class.getName(),"TEST2: inside onCreateLoader");
@@ -303,6 +304,25 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             progressBar.setVisibility(View.INVISIBLE);
             emptyView.setVisibility(View.VISIBLE);
         }
+    }
+
+    //inflating menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.popular) {
+            Toast.makeText(this, "Sorting by popularity", Toast.LENGTH_LONG).show();
+        } else if (id == R.id.ratings) {
+            Toast.makeText(this, "Sorting by ratings", Toast.LENGTH_LONG).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
