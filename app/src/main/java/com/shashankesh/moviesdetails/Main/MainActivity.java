@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         Toolbar toolbar = findViewById(R.id.toolbar_main);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
         //inflating menu for custom toolbar
         toolbar.inflateMenu(R.menu.main_activity);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 //            new WorkerThread().execute(bool);
             Log.i(MainActivity.class.getName(),"TEST2: just before loaderInit");
             LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(1,null,this);
+            loaderManager.restartLoader(1,null,this);
             Log.i(this.toString(),"TEST2: just after loaderInit");
         } else {
             emptyViewText.setText("Please Check Network Connectivity");
@@ -306,24 +306,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }
     }
 
-    //inflating menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.popular) {
-            Toast.makeText(this, "Sorting by popularity", Toast.LENGTH_LONG).show();
-        } else if (id == R.id.ratings) {
-            Toast.makeText(this, "Sorting by ratings", Toast.LENGTH_LONG).show();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public String toString() {

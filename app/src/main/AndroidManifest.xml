@@ -17,7 +17,8 @@
             <meta-data  android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.shashankesh.moviesdetails.Main.MainActivity"></meta-data>
         </activity>
-        <activity android:name=".Main.MainActivity">
+        <activity android:name=".Main.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
